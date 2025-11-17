@@ -15,27 +15,37 @@
     <script defer src="app.js"></script>
   </head>
   <body>
-    <h1>🏆 Ranking de Equipos</h1>
+    <main class="container">
+      <h1>🏆 Ranking de Equipos</h1>
 
-    <div class="table-wrapper">
-      <table class="table table-dark table-hover" id="rankingTable">
-        <thead>
-          <tr>
-            <th>E</th>
-            <th class="sortable" data-col="pj">PJ</th>
-            <th class="sortable" data-col="pg">PG</th>
-            <th class="sortable" data-col="pe">PE</th>
-            <th class="sortable" data-col="pp">PP</th>
-            <th class="sortable" data-col="gf">GF</th>
+      <div class="table-wrapper">
+        <table class="table table-dark table-hover" id="rankingTable">
+          <thead>
+            <tr>
+              <th>E</th>
+              <th class="sortable" data-col="pj">PJ</th>
+              <th class="sortable" data-col="pg">PG</th>
+              <th class="sortable" data-col="pe">PE</th>
+              <th class="sortable" data-col="pp">PP</th>
+              <th class="sortable" data-col="gf">GF</th>
 
-            <th class="sortable" data-col="gc">GC</th>
+              <th class="sortable" data-col="gc">GC</th>
 
-            <th class="sortable" data-col="df">DF</th>
-            <th class="sortable" data-col="ranking">R</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-body"></tbody>
-      </table>
-    </div>
+              <th class="sortable" data-col="df">DF</th>
+              <th class="sortable" data-col="ranking">R</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
+      </div>
+    </main>
+    <footer
+      class="text-center py-4 mt-5"
+      style="background: linear-gradient(90deg, #0d6efd, #6610f2); color: white"
+    >
+      <h5 class="mb-1">Liga Familiar FC25</h5>
+      <p class="mb-0">Creado por <strong>César Adrian Gabriel Cruz</strong></p>
+      <small style="opacity: 0.8">© 2025</small>
+    </footer>
   </body>
 </html>
