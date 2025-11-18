@@ -21,9 +21,9 @@ const indicesCSV = {
   pe: 3,
   pp: 4,
   gf: 10,
-
+  gfpp: 11,
   gc: 12,
-
+  gcpp:13,
   df: 14,
   ranking: 21,
 };
@@ -87,6 +87,7 @@ async function cargarTodos() {
 
     tbody.appendChild(tr);
   });
+  llenarTablasSecundarias(filas);
 }
 
 function sortTable(colName) {
@@ -111,6 +112,60 @@ function resaltarColumna(colName) {
     .forEach((c) => c.classList.remove("highlight"));
   document.querySelectorAll(`#rankingTable tr`).forEach((row) => {
     row.cells[colIndex].classList.add("highlight");
+  });
+}
+
+function llenarTablasSecundarias(filas) {
+  // ORDENAR OFENSIVA (GFpP de mayor a menor)
+  const ofensivaOrdenada = [...filas].sort((a, b) => {
+    const A = parseFloat(a[indicesCSV.gfpp]) || 0;
+    const B = parseFloat(b[indicesCSV.gfpp]) || 0;
+    return B - A; // descendente
+  });
+
+  // ORDENAR DEFENSIVA (GCpP de menor a mayor)
+  const defensivaOrdenada = [...filas].sort((a, b) => {
+    const A = parseFloat(a[indicesCSV.gcpp]) || 0;
+    const B = parseFloat(b[indicesCSV.gcpp]) || 0;
+    return A - B; // ascendente
+  });
+
+  const contOf = document.getElementById("tabla-ofensiva");
+  const contDef = document.getElementById("tabla-defensiva");
+
+  contOf.innerHTML = "";
+  contDef.innerHTML = "";
+
+  // --- LLENAR OFENSIVA ---
+  ofensivaOrdenada.forEach(fila => {
+    const name = fila[0].trim().toUpperCase();
+    const logo = logos[name] ||
+      "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+
+    const gfpp = fila[indicesCSV.gfpp];
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><img class="logo" src="${logo}"></td>
+      <td>${gfpp}</td>
+    `;
+    contOf.appendChild(tr);
+  });
+
+  // --- LLENAR DEFENSIVA ---
+  defensivaOrdenada.forEach(fila => {
+    const name = fila[0].trim().toUpperCase();
+    const logo = logos[name] ||
+      "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+
+    const gcpp = fila[indicesCSV.gcpp];
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><img class="logo" src="${logo}"></td>
+      <td>${gcpp}</td>
+    `;
+    contDef.appendChild(tr);
   });
 }
 

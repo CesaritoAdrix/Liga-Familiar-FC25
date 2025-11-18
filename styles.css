@@ -86,3 +86,13 @@ footer {
   color: white;
 }
 
+.dos-tablas {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 5px;
+}
+
+.tabla-bloque {
+  flex: 1;
+}

@@ -17,7 +17,7 @@
 
   <body>
     <main class="container">
-      <h1 style="padding-top: 25px;">🏆 Ranking de Equipos 🏆</h1>
+      <h1 style="padding-top: 25px">🏆 Ranking de Equipos 🏆</h1>
       <h3>Mes Noviembre</h3>
       <div class="table-wrapper">
         <table class="table table-dark table-hover" id="rankingTable">
@@ -40,7 +40,35 @@
         </table>
       </div>
 
-      
+      <div class="dos-tablas">
+      <div class="tabla-bloque">
+        <h3 class="text-center">Top Ofensiva</h3>
+        <table class="table table-dark table-bordered">
+          <thead>
+            <tr>
+              <th>Equipo</th>
+              <th>GFpP</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-ofensiva"></tbody>
+        </table>
+      </div>
+
+      <div class="tabla-bloque">
+        <h3 class="text-center">Top Defensiva</h3>
+        <table class="table table-dark table-bordered">
+          <thead>
+            <tr>
+              <th>Equipo</th>
+              <th>GCpP</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-defensiva"></tbody>
+        </table>
+      </div>
+    </div>
+
+
     </main>
 
     <footer
@@ -51,6 +79,5 @@
       <p class="mb-0">Creado por <strong>César Adrian Gabriel Cruz</strong></p>
       <small style="opacity: 0.8">© 2025</small>
     </footer>
-
   </body>
 </html>
