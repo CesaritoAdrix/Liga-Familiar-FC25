@@ -16,8 +16,8 @@ html, body {
   padding: 0;
 }
 
-/* Título */
-h1 {
+/* Título y subtítulo */
+h1, h3 {
   text-align: center;
   font-weight: 900;
   margin-bottom: 20px;
@@ -85,3 +85,4 @@ footer {
   background-color: #0d1b2a;
   color: white;
 }
+

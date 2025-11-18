@@ -113,3 +113,4 @@ function resaltarColumna(colName) {
     row.cells[colIndex].classList.add("highlight");
   });
 }
+
