@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="styles.css" />
     <script defer src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
   <body>
@@ -41,34 +42,46 @@
       </div>
 
       <div class="dos-tablas">
-      <div class="tabla-bloque">
-        <h3 class="text-center">Top Ofensiva</h3>
-        <table class="table table-dark table-bordered">
-          <thead>
-            <tr>
-              <th>Equipo</th>
-              <th>GFpP</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-ofensiva"></tbody>
-        </table>
+        <div class="tabla-bloque">
+          <h3 class="text-center">Top Ofensiva</h3>
+          <table class="table table-dark table-bordered">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>GFpP</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-ofensiva"></tbody>
+          </table>
+        </div>
+
+        <div class="tabla-bloque">
+          <h3 class="text-center">Top Defensiva</h3>
+          <table class="table table-dark table-bordered">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>GCpP</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-defensiva"></tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="tabla-bloque">
-        <h3 class="text-center">Top Defensiva</h3>
-        <table class="table table-dark table-bordered">
-          <thead>
-            <tr>
-              <th>Equipo</th>
-              <th>GCpP</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-defensiva"></tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Historial (tabla ranking por mes) -->
 
-
+      <section
+        class="historial-section"
+        aria-label="Historial de ranking por mes"
+      >
+        <h3 style="text-align: center; margin-top: 18px">
+          Historial — Ranking por mes
+        </h3>
+        <div style="max-width: 1100px; margin: auto; padding: 20px">
+          <canvas id="chart-ranking"></canvas>
+        </div>
+      </section>
     </main>
 
     <footer

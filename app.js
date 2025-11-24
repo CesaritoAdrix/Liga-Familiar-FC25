@@ -23,7 +23,7 @@ const indicesCSV = {
   gf: 10,
   gfpp: 11,
   gc: 12,
-  gcpp:13,
+  gcpp: 13,
   df: 14,
   ranking: 21,
 };
@@ -137,9 +137,10 @@ function llenarTablasSecundarias(filas) {
   contDef.innerHTML = "";
 
   // --- LLENAR OFENSIVA ---
-  ofensivaOrdenada.forEach(fila => {
+  ofensivaOrdenada.forEach((fila) => {
     const name = fila[0].trim().toUpperCase();
-    const logo = logos[name] ||
+    const logo =
+      logos[name] ||
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
 
     const gfpp = fila[indicesCSV.gfpp];
@@ -153,9 +154,10 @@ function llenarTablasSecundarias(filas) {
   });
 
   // --- LLENAR DEFENSIVA ---
-  defensivaOrdenada.forEach(fila => {
+  defensivaOrdenada.forEach((fila) => {
     const name = fila[0].trim().toUpperCase();
-    const logo = logos[name] ||
+    const logo =
+      logos[name] ||
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
 
     const gcpp = fila[indicesCSV.gcpp];
@@ -169,3 +171,60 @@ function llenarTablasSecundarias(filas) {
   });
 }
 
+async function cargarHistorial() {
+  const resp = await fetch("historial.json");
+  const historial = await resp.json();
+
+  const meses = Object.keys(historial);
+  // Los equipos (todos los que aparezcan en el historial)
+  const equipos = Object.keys(historial[meses[0]]);
+
+  const datasets = equipos.map((equipo, idx) => {
+    return {
+      label: equipo,
+      data: meses.map((mes) => historial[mes][equipo] ?? null),
+      borderColor: getColorForIndex(idx),
+      fill: false,
+      tension: 0.3,
+      pointRadius: 5,
+    };
+  });
+
+  const ctx = document.getElementById("chart-ranking").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: meses,
+      datasets: datasets,
+    },
+    options: {
+      scales: {
+        y: {
+          title: { display: true, text: "Ranking (0–1+)" },
+          min: 0,
+          // puedes poner max si sabes cuál es el mayor ranking
+        },
+      },
+      plugins: {
+        legend: { position: "bottom" },
+      },
+    },
+  });
+}
+
+// función para asignar colores a cada línea
+function getColorForIndex(i) {
+  const paleta = [
+    "#FF6384",
+    "#36A2EB",
+    "#FFCE56",
+    "#4BC0C0",
+    "#9966FF",
+    "#FF9F40",
+  ];
+  return paleta[i % paleta.length];
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarHistorial();
+});
