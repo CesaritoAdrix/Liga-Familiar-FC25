@@ -13,7 +13,7 @@ const columnas = [
   "ranking",
 ];
 
-// Indices exactos en el CSV (A=0)
+// Indices exactos en el CSV
 const indicesCSV = {
   equipo: 0,
   pj: 1,
@@ -28,7 +28,7 @@ const indicesCSV = {
   ranking: 21,
 };
 
-// Iconos de logos
+// Logos oficiales
 const logos = {
   MADRID: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
   BARCELONA:
@@ -41,10 +41,21 @@ const logos = {
   PSG: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg",
 };
 
+// Colores asignados por equipo
+const teamColors = {
+  BARCELONA: "#FF6384",
+  FRANCIA: "#36A2EB",
+  PSG: "#FFCE56",
+  LIVERPOOL: "#4BC0C0",
+  MADRID: "#9966FF",
+  INGLATERRA: "#FF9F40",
+};
+
 let sortDirections = {};
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarTodos();
+  cargarHistorial();
 
   document.querySelectorAll(".sortable").forEach((header) => {
     header.addEventListener("click", () => {
@@ -56,12 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// -------- TABLA PRINCIPAL --------
 async function cargarTodos() {
   const response = await fetch(CSV_URL);
   const csvText = await response.text();
 
   let filas = csvText.split("\n").map((r) => r.split(","));
-  filas = filas.slice(2, 8); // filas 3-8 (equipos)
+  filas = filas.slice(2, 8); // filas 3-8
 
   const tbody = document.getElementById("tabla-body");
   tbody.innerHTML = "";
@@ -73,12 +85,10 @@ async function cargarTodos() {
       logos[teamName] ||
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
 
-    // Columna del logo
     const tdLogo = document.createElement("td");
     tdLogo.innerHTML = `<img class="logo" src="${logoURL}">`;
     tr.appendChild(tdLogo);
 
-    // Columnas exactas que queremos mostrar
     columnas.slice(1).forEach((col) => {
       const td = document.createElement("td");
       td.textContent = fila[indicesCSV[col]] || "";
@@ -87,6 +97,7 @@ async function cargarTodos() {
 
     tbody.appendChild(tr);
   });
+
   llenarTablasSecundarias(filas);
 }
 
@@ -102,7 +113,7 @@ function sortTable(colName) {
     return sortDirections[colName] ? A - B : B - A;
   });
 
-  rows.forEach((row) => tbody.appendChild(row));
+  rows.forEach((r) => tbody.appendChild(r));
 }
 
 function resaltarColumna(colName) {
@@ -115,20 +126,19 @@ function resaltarColumna(colName) {
   });
 }
 
+// -------- TABLAS SECUNDARIAS --------
 function llenarTablasSecundarias(filas) {
-  // ORDENAR OFENSIVA (GFpP de mayor a menor)
-  const ofensivaOrdenada = [...filas].sort((a, b) => {
-    const A = parseFloat(a[indicesCSV.gfpp]) || 0;
-    const B = parseFloat(b[indicesCSV.gfpp]) || 0;
-    return B - A; // descendente
-  });
+  const ofensivaOrdenada = [...filas].sort(
+    (a, b) =>
+      (parseFloat(b[indicesCSV.gfpp]) || 0) -
+      (parseFloat(a[indicesCSV.gfpp]) || 0)
+  );
 
-  // ORDENAR DEFENSIVA (GCpP de menor a mayor)
-  const defensivaOrdenada = [...filas].sort((a, b) => {
-    const A = parseFloat(a[indicesCSV.gcpp]) || 0;
-    const B = parseFloat(b[indicesCSV.gcpp]) || 0;
-    return A - B; // ascendente
-  });
+  const defensivaOrdenada = [...filas].sort(
+    (a, b) =>
+      (parseFloat(a[indicesCSV.gcpp]) || 0) -
+      (parseFloat(b[indicesCSV.gcpp]) || 0)
+  );
 
   const contOf = document.getElementById("tabla-ofensiva");
   const contDef = document.getElementById("tabla-defensiva");
@@ -136,83 +146,116 @@ function llenarTablasSecundarias(filas) {
   contOf.innerHTML = "";
   contDef.innerHTML = "";
 
-  // --- LLENAR OFENSIVA ---
   ofensivaOrdenada.forEach((fila) => {
     const name = fila[0].trim().toUpperCase();
-    const logo =
-      logos[name] ||
-      "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
-
+    const logo = logos[name];
     const gfpp = fila[indicesCSV.gfpp];
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><img class="logo" src="${logo}"></td>
-      <td>${gfpp}</td>
-    `;
-    contOf.appendChild(tr);
+    contOf.innerHTML += `
+      <tr>
+        <td><img class="logo" src="${logo}"></td>
+        <td>${gfpp}</td>
+      </tr>`;
   });
 
-  // --- LLENAR DEFENSIVA ---
   defensivaOrdenada.forEach((fila) => {
     const name = fila[0].trim().toUpperCase();
-    const logo =
-      logos[name] ||
-      "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
-
+    const logo = logos[name];
     const gcpp = fila[indicesCSV.gcpp];
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><img class="logo" src="${logo}"></td>
-      <td>${gcpp}</td>
-    `;
-    contDef.appendChild(tr);
+    contDef.innerHTML += `
+      <tr>
+        <td><img class="logo" src="${logo}"></td>
+        <td>${gcpp}</td>
+      </tr>`;
   });
 }
 
+// -------- GRÁFICA + LEYENDA --------
 async function cargarHistorial() {
   const resp = await fetch("historial.json");
   const historial = await resp.json();
 
   const meses = Object.keys(historial);
-  // Los equipos (todos los que aparezcan en el historial)
   const equipos = Object.keys(historial[meses[0]]);
 
-  const datasets = equipos.map((equipo, idx) => {
+  // --- CREA DATASETS ---
+  const datasets = equipos.map((equipo, i) => {
+    const TEAM = equipo.toUpperCase();
+    const color = teamColors[TEAM] || getColorForIndex(i);
+
     return {
       label: equipo,
-      data: meses.map((mes) => historial[mes][equipo] ?? null),
-      borderColor: getColorForIndex(idx),
-      fill: false,
+      data: meses.map((m) => historial[m][equipo] ?? null),
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 3,
       tension: 0.3,
+
+      pointStyle: "circle",
       pointRadius: 5,
+      pointHoverRadius: 7,
     };
   });
 
+  // --- CREA GRÁFICA ---
   const ctx = document.getElementById("chart-ranking").getContext("2d");
+
   new Chart(ctx, {
     type: "line",
-    data: {
-      labels: meses,
-      datasets: datasets,
-    },
+    data: { labels: meses, datasets },
+
     options: {
-      scales: {
-        y: {
-          title: { display: true, text: "Ranking (0–1+)" },
-          min: 0,
-          // puedes poner max si sabes cuál es el mayor ranking
+      responsive: true,
+      maintainAspectRatio: false, 
+      plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: "#fff",       // leyenda blanca
+          font: { size: 12 },
         },
       },
+      scales: {
+        x: {
+          ticks: { color: "#fff" },       // texto eje X blanco
+          grid: { color: "#666" },        // líneas de la grilla gris oscuro
+        },
+        y: {
+          ticks: { color: "#fff" },       // texto eje Y blanco
+          grid: { color: "#666" },        // líneas de la grilla gris oscuro
+        },
+      },
+      
       plugins: {
-        legend: { position: "bottom" },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true, // circulitos de color
+            pointStyleWidth: 12,
+            boxWidth: 12,
+            padding: 15,
+            font: {
+              size: 12,
+            },
+            // mostramos el nombre del equipo
+            generateLabels: (chart) => {
+              return chart.data.datasets.map((ds, i) => ({
+                text: ds.label,
+                fillStyle: ds.borderColor,
+                strokeStyle: ds.borderColor,
+                lineWidth: ds.borderWidth,
+                hidden: !chart.isDatasetVisible(i),
+                datasetIndex: i,
+              }));
+            },
+          },
+        },
       },
     },
-  });
+  }});
 }
 
-// función para asignar colores a cada línea
 function getColorForIndex(i) {
   const paleta = [
     "#FF6384",
@@ -224,7 +267,3 @@ function getColorForIndex(i) {
   ];
   return paleta[i % paleta.length];
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  cargarHistorial();
-});

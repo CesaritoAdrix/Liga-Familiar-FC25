@@ -11,13 +11,15 @@ body {
 }
 
 /* Para asegurar tamaño correcto del viewport */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
 
 /* Título y subtítulo */
-h1, h3 {
+h1,
+h3 {
   text-align: center;
   font-weight: 900;
   margin-bottom: 20px;
@@ -37,7 +39,8 @@ table {
   overflow: hidden;
 }
 
-th, td {
+th,
+td {
   text-align: center !important;
   vertical-align: middle;
   color: white;
@@ -95,4 +98,20 @@ footer {
 
 .tabla-bloque {
   flex: 1;
+}
+
+#chart-ranking {
+  width: 100%;
+  height: 600px; /* ajusta a lo que quieras */
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+  background-color: #111; /* fondo negro */
+  border-radius: 12px;
+}
+
+@media (max-width: 600px) {
+  #chart-ranking {
+    height: 500px; /* menos alto en celulares */
+  }
 }

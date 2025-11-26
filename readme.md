@@ -34,6 +34,7 @@ Simplemente abre la URL del proyecto (GitHub Pages) y consulta las estadísticas
 
 ## 🌐 GitHub Pages
 Cuando GitHub Pages esté activo, la app estará disponible aquí:
+https://cesaritoadrix.github.io/Liga-Familiar-FC25/ 
 
 ## 👨‍💻 Créditos
 Proyecto desarrollado por **César Adrian Gabriel Cruz** para la Liga Familiar FC25.
