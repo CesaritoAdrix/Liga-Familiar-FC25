@@ -207,63 +207,39 @@ async function cargarHistorial() {
 
     options: {
       responsive: true,
-      maintainAspectRatio: false, 
-      plugins: {
-      legend: {
-        position: "bottom",
-        labels: {
-          color: "#fff",       // leyenda blanca
-          font: { size: 12 },
-        },
-      },
-      scales: {
-        x: {
-          ticks: { color: "#fff" },       // texto eje X blanco
-          grid: { color: "#666" },        // líneas de la grilla gris oscuro
-        },
-        y: {
-          ticks: { color: "#fff" },       // texto eje Y blanco
-          grid: { color: "#666" },        // líneas de la grilla gris oscuro
-        },
-      },
-      
+      maintainAspectRatio: false,
+
       plugins: {
         legend: {
           position: "bottom",
           labels: {
-            usePointStyle: true, // circulitos de color
+            usePointStyle: true,
             pointStyleWidth: 12,
             boxWidth: 12,
             padding: 15,
-            font: {
-              size: 12,
-            },
-            // mostramos el nombre del equipo
-            generateLabels: (chart) => {
-              return chart.data.datasets.map((ds, i) => ({
-                text: ds.label,
-                fillStyle: ds.borderColor,
-                strokeStyle: ds.borderColor,
-                lineWidth: ds.borderWidth,
-                hidden: !chart.isDatasetVisible(i),
-                datasetIndex: i,
-              }));
-            },
+            color: "#fff",
+            font: { size: 12 },
           },
+        },
+        title: {
+          display: true,
+          text: "RANKING",
+          color: "#fff",
+          font: { size: 18, weight: "bold" },
+          padding: { top: 10, bottom: 20 },
+        },
+      },
+
+      scales: {
+        x: {
+          ticks: { color: "#fff" },
+          grid: { color: "#666" }, // líneas X grises
+        },
+        y: {
+          ticks: { color: "#fff" },
+          grid: { color: "#666" }, // líneas Y grises
         },
       },
     },
-  }});
-}
-
-function getColorForIndex(i) {
-  const paleta = [
-    "#FF6384",
-    "#36A2EB",
-    "#FFCE56",
-    "#4BC0C0",
-    "#9966FF",
-    "#FF9F40",
-  ];
-  return paleta[i % paleta.length];
+  });
 }
