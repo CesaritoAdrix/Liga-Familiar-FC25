@@ -43,12 +43,12 @@ const logos = {
 
 // Colores asignados por equipo
 const teamColors = {
-  BARCELONA: "#FF6384",
-  FRANCIA: "#36A2EB",
-  PSG: "#FFCE56",
-  LIVERPOOL: "#4BC0C0",
-  MADRID: "#9966FF",
-  INGLATERRA: "#FF9F40",
+  BARCELONA: "#ff0037ff",
+  FRANCIA: "#0099ffb5",
+  PSG: "#f20fdbff",
+  LIVERPOOL: "#ffffffff",
+  MADRID: "#9f10ffff",
+  INGLATERRA: "#fbefa1ff",
 };
 
 let sortDirections = {};
