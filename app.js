@@ -52,10 +52,12 @@ const teamColors = {
 };
 
 let sortDirections = {};
+let chartHistorial = null;
+let modoHistorial = "ranking";
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarTodos();
-  cargarHistorial();
+  cargarHistorialSwitch();
 
   document.querySelectorAll(".sortable").forEach((header) => {
     header.addEventListener("click", () => {
@@ -172,17 +174,21 @@ function llenarTablasSecundarias(filas) {
 }
 
 // -------- GRÁFICA + LEYENDA --------
-async function cargarHistorial() {
-  const resp = await fetch("historial.json");
+async function cargarHistorial(archivo = "historial.json", titulo = "RANKING") {
+  const resp = await fetch(archivo);
   const historial = await resp.json();
 
   const meses = Object.keys(historial);
   const equipos = Object.keys(historial[meses[0]]);
 
-  // --- CREA DATASETS ---
+  // Array de colores de respaldo si faltan equipos en teamColors
+  const colorsArray = Object.values(teamColors);
+
   const datasets = equipos.map((equipo, i) => {
     const TEAM = equipo.toUpperCase();
-    const color = teamColors[TEAM] || getColorForIndex(i);
+
+    // 🔥 Nuevo: solo usamos teamColors o fallback con colorsArray
+    const color = teamColors[TEAM] || colorsArray[i % colorsArray.length];
 
     return {
       label: equipo,
@@ -191,24 +197,26 @@ async function cargarHistorial() {
       backgroundColor: color,
       borderWidth: 3,
       tension: 0.3,
-
       pointStyle: "circle",
       pointRadius: 5,
       pointHoverRadius: 7,
     };
   });
 
-  // --- CREA GRÁFICA ---
   const ctx = document.getElementById("chart-ranking").getContext("2d");
 
-  new Chart(ctx, {
+  // 🔥 Destruir gráfica anterior
+  if (chartHistorial) {
+    chartHistorial.destroy();
+  }
+
+  // 🔥 Crear nueva gráfica
+  chartHistorial = new Chart(ctx, {
     type: "line",
     data: { labels: meses, datasets },
-
     options: {
       responsive: true,
       maintainAspectRatio: false,
-
       plugins: {
         legend: {
           position: "bottom",
@@ -223,23 +231,59 @@ async function cargarHistorial() {
         },
         title: {
           display: true,
-          text: "RANKING",
+          text: titulo,
           color: "#fff",
           font: { size: 18, weight: "bold" },
           padding: { top: 10, bottom: 20 },
         },
       },
-
       scales: {
         x: {
           ticks: { color: "#fff" },
-          grid: { color: "#666" }, // líneas X grises
+          grid: { color: "#666" },
         },
         y: {
+          reverse: (titulo.includes("CONTRA")),
           ticks: { color: "#fff" },
-          grid: { color: "#666" }, // líneas Y grises
+          grid: { color: "#666" },
         },
       },
     },
   });
+}
+
+// --- ACTIVAR BOTÓN VISUALMENTE ---
+function activarBoton(tab) {
+  const botones = document.querySelectorAll(".historial-buttons button");
+
+  botones.forEach((btn) => btn.classList.remove("active"));
+
+  const seleccionado = document.querySelector(
+    `.historial-buttons button[data-tab="${tab}"]`
+  );
+  if (seleccionado) seleccionado.classList.add("active");
+}
+
+// --- SWITCH PRINCIPAL ---
+function cargarHistorialSwitch() {
+  switch (modoHistorial) {
+    case "ranking":
+      cargarHistorial("historial.json", "RANKING");
+      break;
+
+    case "gfpp":
+      cargarHistorial("historialgfpp.json", "GOLES A FAVOR POR PARTIDO");
+      break;
+
+    case "gcpp":
+      cargarHistorial("historialgcpp.json", "GOLES EN CONTRA POR PARTIDO");
+      break;
+  }
+}
+
+// --- FUNCIÓN QUE CAMBIA EL HISTORIAL ---
+function cambiarHistorial(tipo) {
+  modoHistorial = tipo;
+  activarBoton(tipo);
+  cargarHistorialSwitch();
 }

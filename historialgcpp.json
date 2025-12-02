@@ -1,0 +1,37 @@
+{
+  "AGO 2025": {
+    "MADRID": 1.09,
+    "BARCELONA": 1.18,
+    "INGLATERRA": 1.18,
+    "LIVERPOOL": 1.39,
+    "FRANCIA": 2.0,
+    "PSG": 2.5
+  },
+
+  "SEP 2025": {
+    "MADRID": 0.62,
+    "BARCELONA": 1.36,
+    "LIVERPOOL": 1.39,
+    "INGLATERRA": 1.9,
+    "FRANCIA": 2.34,
+    "PSG": 2.5
+  },
+
+  "OCT 2025": {
+    "MADRID": 0.71,
+    "FRANCIA": 1.64,
+    "BARCELONA": 1.71,
+    "INGLATERRA": 2.0,
+    "LIVERPOOL": 2.11,
+    "PSG": 2.5
+  },
+
+  "NOV 2025": {
+    "MADRID": 0.75,
+    "INGLATERRA": 1.19,
+    "BARCELONA": 1.42,
+    "LIVERPOOL": 1.81,
+    "FRANCIA": 2.41,
+    "PSG": 2.78
+  }
+}

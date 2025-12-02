@@ -12,8 +12,8 @@
     />
 
     <link rel="stylesheet" href="styles.css" />
-    <script defer src="app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="app.js"></script>
   </head>
 
   <body>
@@ -72,13 +72,31 @@
       <!-- Historial (tabla ranking por mes) -->
 
       <section
-        class="historial-section"
+        class="historial-section py-5"
         aria-label="Historial de ranking por mes"
       >
         <h3 style="text-align: center; margin-top: 18px; color: white">
           Historial
         </h3>
         <div class="chart-container">
+          <div class="historial-buttons">
+            <button
+              onclick="cambiarHistorial('ranking')"
+              data-tab="ranking"
+              class="active"
+            >
+              📊 Ranking
+            </button>
+
+            <button onclick="cambiarHistorial('gfpp')" data-tab="gfpp">
+              ⚽ GFpP
+            </button>
+
+            <button onclick="cambiarHistorial('gcpp')" data-tab="gcpp">
+              🛡 GCpP
+            </button>
+          </div>
+
           <canvas id="chart-ranking"></canvas>
         </div>
       </section>
