@@ -1,8 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getMessaging,
-  getToken,
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 // 🔥 Firebase Config
 const firebaseConfig = {
@@ -48,9 +43,11 @@ document
       }
 
       const token = await messaging.getToken({
-        vapidKey:
-          "BEZOtufn8eAxW2lb9coj0dThyaclO01SzRU3sOHe1TuwMPCAT0yds14dQJFroGyQuXpfZqFQi3owa5RCsk2tWcU",
-      });
+  vapidKey: VAPID_KEY,
+  serviceWorkerRegistration: await navigator.serviceWorker.ready
+});
+
+console.log("✅ TOKEN:", token);
 
       console.log("✅ TOKEN:", token);
       alert("Notificaciones activadas ✅");
