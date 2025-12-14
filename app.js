@@ -1,8 +1,10 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+import {
+  getMessaging,
+  getToken,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
-// 🔥 Firebase config
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBPKtBEFLvSQBuVzR9nB0Nx0G55_Ap0XTk",
   authDomain: "liga-familiar-fc25.firebaseapp.com",
@@ -13,10 +15,10 @@ const firebaseConfig = {
 };
 
 // 🔥 Inicializar Firebase
-const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
-// 🔥 Inicializar Messaging
-const messaging = getMessaging(app);
+// 🔔 Messaging
+const messaging = firebase.messaging();
 
 async function registrarServiceWorker() {
   if (!("serviceWorker" in navigator)) {
@@ -40,27 +42,22 @@ document
   .addEventListener("click", async () => {
     try {
       const permission = await Notification.requestPermission();
-
       if (permission !== "granted") {
-        alert("Debes aceptar las notificaciones 🙏");
+        alert("Debes aceptar notificaciones");
         return;
       }
 
-      const registration = await registrarServiceWorker();
-
-      const token = await getToken(messaging, {
-        vapidKey: VAPID_KEY,
-        serviceWorkerRegistration: registration,
+      const token = await messaging.getToken({
+        vapidKey:
+          "BEZOtufn8eAxW2lb9coj0dThyaclO01SzRU3sOHe1TuwMPCAT0yds14dQJFroGyQuXpfZqFQi3owa5RCsk2tWcU",
       });
 
-      console.log("✅ TOKEN FCM:", token);
+      console.log("✅ TOKEN:", token);
       alert("Notificaciones activadas ✅");
-
-    } catch (err) {
-      console.error("❌ Error al activar notificaciones", err);
+    } catch (e) {
+      console.error("❌ Error notificaciones", e);
     }
   });
-
 
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQen_K3YhSrxJHvTFntTcHTSr8m-nTS5KzgJyh7oAYSL2F0hfcRgYbQDD5PCcyrrg/pub?output=csv";
@@ -307,7 +304,7 @@ async function cargarHistorial(archivo = "historial.json", titulo = "RANKING") {
           grid: { color: "#666" },
         },
         y: {
-          reverse: (titulo.includes("CONTRA")),
+          reverse: titulo.includes("CONTRA"),
           ticks: { color: "#fff" },
           grid: { color: "#666" },
         },
@@ -353,5 +350,3 @@ function cambiarHistorial(tipo) {
 }
 
 window.cambiarHistorial = cambiarHistorial;
-
-

@@ -11,13 +11,17 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="styles.css" />
+    <!-- Firebase COMPAT -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
 
-    <!-- Chart.js -->
+    <!-- Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Tu app (Firebase modular) -->
-    <script type="module" src="./app.js"></script>
+    <!-- TU APP -->
+    <script defer src="app.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
 
     <link rel="manifest" href="manifest.json" />
   </head>
@@ -124,13 +128,12 @@
     </footer>
 
     <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("./service-worker.js")
-      .then(() => console.log("👍 Service Worker registrado"))
-      .catch((err) => console.error("SW error:", err));
-  }
-</script>
-
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("./service-worker.js")
+          .then(() => console.log("👍 Service Worker registrado"))
+          .catch((err) => console.error("SW error:", err));
+      }
+    </script>
   </body>
 </html>
