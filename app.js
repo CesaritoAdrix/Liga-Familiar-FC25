@@ -352,3 +352,6 @@ function cambiarHistorial(tipo) {
   cargarHistorialSwitch();
 }
 
+window.cambiarHistorial = cambiarHistorial;
+
+

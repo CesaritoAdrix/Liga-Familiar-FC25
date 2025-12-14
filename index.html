@@ -124,5 +124,15 @@
       <p class="mb-0">Creado por <strong>César Adrian Gabriel Cruz</strong></p>
       <small style="opacity: 0.8">© 2025</small>
     </footer>
+
+    <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(() => console.log("👍 Service Worker registrado"))
+      .catch((err) => console.error("SW error:", err));
+  }
+</script>
+
   </body>
 </html>
