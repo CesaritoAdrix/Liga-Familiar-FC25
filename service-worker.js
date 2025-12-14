@@ -23,13 +23,12 @@ messaging.onBackgroundMessage(function (payload) {
   });
 });
 
-const CACHE_NAME = "liga-fc25-cache-v1";
+const CACHE_NAME = "liga-fc25-cache-v2";
 
 const urlsToCache = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js",
   "./manifest.json",
   "./historial.json",
   "./historialgfpp.json",
