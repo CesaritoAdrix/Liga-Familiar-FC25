@@ -1,3 +1,67 @@
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
+// 🔥 Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyBPKtBEFLvSQBuVzR9nB0Nx0G55_Ap0XTk",
+  authDomain: "liga-familiar-fc25.firebaseapp.com",
+  projectId: "liga-familiar-fc25",
+  storageBucket: "liga-familiar-fc25.firebasestorage.app",
+  messagingSenderId: "871975941322",
+  appId: "1:871975941322:web:1f48918810572b3974f033",
+};
+
+// 🔥 Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+
+// 🔥 Inicializar Messaging
+const messaging = getMessaging(app);
+
+async function registrarServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    throw new Error("Service Worker no soportado");
+  }
+
+  const registration = await navigator.serviceWorker.register(
+    "/firebase-messaging-sw.js"
+  );
+
+  console.log("✅ Service Worker registrado");
+  return registration;
+}
+
+// --- SOLICITAR PERMISO ---
+const VAPID_KEY =
+  "BEZOtufn8eAxW2lb9coj0dThyaclO01SzRU3sOHe1TuwMPCAT0yds14dQJFroGyQuXpfZqFQi3owa5RCsk2tWcU";
+
+document
+  .getElementById("btn-notificaciones")
+  .addEventListener("click", async () => {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        alert("Debes aceptar las notificaciones 🙏");
+        return;
+      }
+
+      const registration = await registrarServiceWorker();
+
+      const token = await getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration,
+      });
+
+      console.log("✅ TOKEN FCM:", token);
+      alert("Notificaciones activadas ✅");
+
+    } catch (err) {
+      console.error("❌ Error al activar notificaciones", err);
+    }
+  });
+
+
 const CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQen_K3YhSrxJHvTFntTcHTSr8m-nTS5KzgJyh7oAYSL2F0hfcRgYbQDD5PCcyrrg/pub?output=csv";
 
@@ -287,3 +351,4 @@ function cambiarHistorial(tipo) {
   activarBoton(tipo);
   cargarHistorialSwitch();
 }
+
