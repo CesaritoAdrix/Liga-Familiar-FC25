@@ -55,27 +55,40 @@ let sortDirections = {};
 let chartHistorial = null;
 let modoHistorial = "ranking";
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarTodos();
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarTodos();
+
+  sortDirections["ranking"] = false; 
+  sortTable("ranking");
+  resaltarColumna("ranking");
+
   cargarHistorialSwitch();
 
   document.querySelectorAll(".sortable").forEach((header) => {
     header.addEventListener("click", () => {
       const col = header.getAttribute("data-col");
+      sortDirections[col] = !sortDirections[col];
       sortTable(col);
       resaltarColumna(col);
-      sortDirections[col] = !sortDirections[col];
     });
   });
 });
+
 
 // -------- TABLA PRINCIPAL --------
 async function cargarTodos() {
   const response = await fetch(CSV_URL);
   const csvText = await response.text();
 
-  let filas = csvText.split("\n").map((r) => r.split(","));
-  filas = filas.slice(2, 8); // filas 3-8
+    let filas = csvText
+    .split("\n")
+    .map((r) => r.split(","))
+    .slice(2, 8) // filas 3-8
+    .filter((fila) => {
+      const pj = Number(fila[indicesCSV.pj]);
+      return pj > 0;
+    });
+
 
   const tbody = document.getElementById("tabla-body");
   tbody.innerHTML = "";
