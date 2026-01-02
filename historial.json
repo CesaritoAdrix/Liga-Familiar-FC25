@@ -33,6 +33,12 @@
     "FRANCIA": 0.38,
     "LIVERPOOL": 0.34,
     "PSG": 0.22
-  }
+  },
 
+  "DIC 2025": {
+    "MADRID": 0.62,
+    "FRANCIA": 0.40,
+    "BARCELONA": 0.36,
+    "LIVERPOOL": 0.35
+  }
 }
