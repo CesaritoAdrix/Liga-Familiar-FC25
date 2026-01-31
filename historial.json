@@ -40,5 +40,14 @@
     "FRANCIA": 0.40,
     "BARCELONA": 0.36,
     "LIVERPOOL": 0.35
+  },
+
+  "ENE 2026": {
+    "MADRID": 0.79,
+    "BARCELONA": 0.52,
+    "FRANCIA": 0.40,
+    "PSG": 0.34,
+    "INGLATERRA": 0.31,
+    "LIVERPOOL": 0.30
   }
 }
