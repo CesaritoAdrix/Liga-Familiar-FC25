@@ -37,9 +37,11 @@
 
   "DIC/25": {
     "MADRID": 0.62,
+    "INGLATERRA": 0.51,
     "FRANCIA": 0.40,
     "BARCELONA": 0.36,
-    "LIVERPOOL": 0.35
+    "LIVERPOOL": 0.35,
+    "PSG": 0.22
   },
 
   "ENE/26": {
