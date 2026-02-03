@@ -5,10 +5,7 @@ const urlsToCache = [
   "./",
   "./index.html",
   "./styles.css",
-  "./manifest.json",
-  "./historial.json",
-  "./historialgfpp.json",
-  "./historialgcpp.json",
+  "./manifest.json"
 ];
 
 // Instalar SW
