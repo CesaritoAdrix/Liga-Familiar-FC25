@@ -55,32 +55,12 @@ let sortDirections = {};
 let chartHistorial = null;
 let modoHistorial = "ranking";
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await cargarTodos();
-
-  sortDirections["ranking"] = false; 
-  sortTable("ranking");
-  resaltarColumna("ranking");
-
-  cargarHistorialSwitch();
-
-  document.querySelectorAll(".sortable").forEach((header) => {
-    header.addEventListener("click", () => {
-      const col = header.getAttribute("data-col");
-      sortDirections[col] = !sortDirections[col];
-      sortTable(col);
-      resaltarColumna(col);
-    });
-  });
-});
-
-
 // -------- TABLA PRINCIPAL --------
 async function cargarTodos() {
   const response = await fetch(CSV_URL);
   const csvText = await response.text();
 
-    let filas = csvText
+  let filas = csvText
     .split("\n")
     .map((r) => r.split(","))
     .slice(2, 8) // filas 3-8
@@ -88,7 +68,6 @@ async function cargarTodos() {
       const pj = Number(fila[indicesCSV.pj]);
       return pj > 0;
     });
-
 
   const tbody = document.getElementById("tabla-body");
   tbody.innerHTML = "";
@@ -125,6 +104,9 @@ function sortTable(colName) {
   rows.sort((a, b) => {
     const A = parseFloat(a.cells[colIndex].innerText.replace("%", "")) || 0;
     const B = parseFloat(b.cells[colIndex].innerText.replace("%", "")) || 0;
+    if (colName === "ranking") {
+      return B - A;
+    }
     return sortDirections[colName] ? A - B : B - A;
   });
 
@@ -146,13 +128,13 @@ function llenarTablasSecundarias(filas) {
   const ofensivaOrdenada = [...filas].sort(
     (a, b) =>
       (parseFloat(b[indicesCSV.gfpp]) || 0) -
-      (parseFloat(a[indicesCSV.gfpp]) || 0)
+      (parseFloat(a[indicesCSV.gfpp]) || 0),
   );
 
   const defensivaOrdenada = [...filas].sort(
     (a, b) =>
       (parseFloat(a[indicesCSV.gcpp]) || 0) -
-      (parseFloat(b[indicesCSV.gcpp]) || 0)
+      (parseFloat(b[indicesCSV.gcpp]) || 0),
   );
 
   const contOf = document.getElementById("tabla-ofensiva");
@@ -200,7 +182,6 @@ async function cargarHistorial(archivo = "historial.json", titulo = "RANKING") {
   const datasets = equipos.map((equipo, i) => {
     const TEAM = equipo.toUpperCase();
 
-    // 🔥 Nuevo: solo usamos teamColors o fallback con colorsArray
     const color = teamColors[TEAM] || colorsArray[i % colorsArray.length];
 
     return {
@@ -272,7 +253,7 @@ function activarBoton(tab) {
   botones.forEach((btn) => btn.classList.remove("active"));
 
   const seleccionado = document.querySelector(
-    `.historial-buttons button[data-tab="${tab}"]`
+    `.historial-buttons button[data-tab="${tab}"]`,
   );
   if (seleccionado) seleccionado.classList.add("active");
 }
@@ -302,3 +283,129 @@ function cambiarHistorial(tipo) {
 }
 
 window.cambiarHistorial = cambiarHistorial;
+
+async function generarProyeccionHistorial() {
+  const pesoActual = 0.6;
+  const pesoHist = 0.4;
+
+  // 🔵 1️⃣ Obtener ranking actual desde el CSV
+  const response = await fetch(CSV_URL);
+  const csvText = await response.text();
+
+  let filasActuales = csvText
+    .split("\n")
+    .map((r) => r.split(","))
+    .slice(2, 8)
+    .filter((fila) => Number(fila[indicesCSV.pj]) > 0);
+
+  const rankingActual = {};
+
+  filasActuales.forEach((fila) => {
+    const equipo = fila[indicesCSV.equipo].trim().toUpperCase();
+    const valorRanking = fila[indicesCSV.ranking]?.trim();
+    rankingActual[equipo] = valorRanking ? parseFloat(valorRanking) : 0;
+  });
+
+  // 🔵 2️⃣ Historial
+  const rankingHist = await fetch("historial.json").then((r) => r.json());
+
+  const meses = Object.keys(rankingHist);
+  const equipos = Object.keys(rankingHist[meses[0]]);
+
+  const proyeccion = {};
+
+  equipos.forEach((eq) => {
+    let sumRanking = 0;
+    let count = 0;
+
+    const ultimosMeses = meses.slice(-3);
+
+    ultimosMeses.forEach((mes) => {
+      sumRanking += rankingHist[mes][eq] || 0;
+      count++;
+    });
+
+    const promedioHist = sumRanking / count;
+
+    const actual = rankingActual[eq.toUpperCase()] || 0;
+
+    const rankingFinal =
+      actual * pesoActual +
+      promedioHist * pesoHist;
+
+    proyeccion[eq] = {
+      actual: actual,
+      historico: promedioHist,
+      dinamico: rankingFinal,
+    };
+  });
+
+  const proyeccionArray = Object.entries(proyeccion)
+    .map(([eq, data]) => ({ equipo: eq, ...data }))
+    .sort((a, b) => b.dinamico - a.dinamico);
+
+  const cont = document.getElementById("tabla-proyeccion");
+  if (!cont) return;
+
+  cont.innerHTML = "";
+
+  const thead = document.createElement("thead");
+  const trHead = document.createElement("tr");
+
+  ["Logo", "R DINAMICO", "R HISTORICO", "R ACTUAL"].forEach((titulo) => {
+    const th = document.createElement("th");
+    th.textContent = titulo;
+    trHead.appendChild(th);
+  });
+
+  thead.appendChild(trHead);
+  cont.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  cont.appendChild(tbody);
+
+  proyeccionArray.forEach((fila) => {
+    const tr = document.createElement("tr");
+
+    const tdLogo = document.createElement("td");
+    const logoURL = logos[fila.equipo.toUpperCase()] || "";
+    tdLogo.innerHTML = `<img class="logo" src="${logoURL}">`;
+    tr.appendChild(tdLogo);
+
+    const tdDinamico = document.createElement("td");
+    tdDinamico.textContent = fila.dinamico.toFixed(2);
+    tdDinamico.style.fontWeight = "bold";
+    tr.appendChild(tdDinamico);
+
+    const tdHistorico = document.createElement("td");
+    tdHistorico.textContent = fila.historico.toFixed(2);
+    tr.appendChild(tdHistorico);
+
+    const tdActual = document.createElement("td");
+    tdActual.textContent = fila.actual.toFixed(2);
+    tr.appendChild(tdActual);
+
+    tbody.appendChild(tr);
+  });
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarTodos();
+
+  sortDirections["ranking"] = true; // mayor primero
+  sortTable("ranking");
+  resaltarColumna("ranking");
+
+  document.querySelectorAll(".sortable").forEach((header) => {
+    header.addEventListener("click", () => {
+      const col = header.getAttribute("data-col");
+      sortDirections[col] = !sortDirections[col];
+      sortTable(col);
+      resaltarColumna(col);
+    });
+  });
+
+  cargarHistorialSwitch();
+  generarProyeccionHistorial();
+});
