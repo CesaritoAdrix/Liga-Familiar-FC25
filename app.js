@@ -352,7 +352,7 @@ async function generarProyeccionHistorial() {
   const thead = document.createElement("thead");
   const trHead = document.createElement("tr");
 
-  ["Logo", "R DINAMICO", "R HISTORICO", "R ACTUAL"].forEach((titulo) => {
+  ["EQUIPO", "R DINAMICO", "R HISTORICO", "R ACTUAL"].forEach((titulo) => {
     const th = document.createElement("th");
     th.textContent = titulo;
     trHead.appendChild(th);
