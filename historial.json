@@ -54,11 +54,11 @@
   },
 
   "FEB/26": {
-    "MADRID": 0.91,
-    "BARCELONA": 0.43,
-    "PSG": 0.43,
-    "FRANCIA": 0.39,
+    "MADRID": 0.86,
+    "PSGBARCELONA": 0.43,
+    "BARCELONA": 0.42,
+    "FRANCIA": 0.41,
     "INGLATERRA": 0.30,
-    "LIVERPOOL": 0.27
+    "LIVERPOOL": 0.29
   }
 }
