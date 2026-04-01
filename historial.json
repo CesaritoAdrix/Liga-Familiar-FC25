@@ -60,5 +60,14 @@
     "FRANCIA": 0.38,
     "INGLATERRA": 0.30,
     "LIVERPOOL": 0.29
+  }, 
+
+  "MAR/26": {
+    "BARCELONA": 0.62,
+    "MADRID": 0.57,
+    "FRANCIA": 0.42,
+    "LIVERPOOL": 0.36,
+    "INGLATERRA": 0.35,
+    "PSG": 0.23
   }
 }
