@@ -2,8 +2,8 @@ const CACHE_NAME = "liga-fc25-cache-mayo-final-2026";
 const urlsToCache = [
   "./",
   //"./index.html",
-  "./styles.css",
-  "./manifest.json",
+  //"./styles.css"
+  //"./manifest.json",
 ];
 
 // Instalar SW
