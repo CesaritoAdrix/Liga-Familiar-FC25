@@ -1,4 +1,4 @@
-const CACHE_NAME = "liga-fc25-cache-julio-1-2026";
+const CACHE_NAME = "liga-fc25-cache-julio-v2-2026";
 const urlsToCache = [
   "./",
   //"./index.html",
