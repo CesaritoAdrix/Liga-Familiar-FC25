@@ -85,5 +85,13 @@
     "BARCELONA": 0.50,
     "LIVERPOOL": 0.275,
     "PSG": 0.07    
+  }, 
+
+  "JUN/26": {
+    "MADRID": 0.67,
+    "BARCELONA": 0.61,
+    "PSG": 0.32,
+    "FRANCIA": 0.30,
+    "LIVERPOOL": 0.18
   }
 }
