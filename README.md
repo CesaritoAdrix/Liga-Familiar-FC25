@@ -1,4 +1,4 @@
-# ⚽ Liga Familiar FC25
+# ⚽ Liga Familiar FC26
 
 Visualizador moderno de estadísticas para los torneos familiares de FC25, ahora disponible como **Aplicación Web Progresiva (PWA)**.
 
