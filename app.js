@@ -33,8 +33,6 @@ const logos = {
   MADRID: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg",
   BARCELONA:
     "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg",
-  BARCA:
-    "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg",
   LIVERPOOL: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg",
   FRANCIA: "https://img.icons8.com/fluency/48/france-circular.png",
   INGLATERRA: "https://img.icons8.com/fluency/48/england-circular.png",
@@ -63,7 +61,7 @@ async function cargarTodos() {
   let filas = csvText
     .split("\n")
     .map((r) => r.split(","))
-    .slice(2, 8) // filas 3-8
+    .slice(2, 9) // filas 3-9
     .filter((fila) => {
       const pj = Number(fila[indicesCSV.pj]);
       return pj > 0;
@@ -74,7 +72,7 @@ async function cargarTodos() {
 
   filas.forEach((fila) => {
     const tr = document.createElement("tr");
-    const teamName = fila[0].trim().toUpperCase();
+    const teamName = fila[indicesCSV.equipo].trim().toUpperCase();
     const logoURL =
       logos[teamName] ||
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
@@ -144,7 +142,7 @@ function llenarTablasSecundarias(filas) {
   contDef.innerHTML = "";
 
   ofensivaOrdenada.forEach((fila) => {
-    const name = fila[0].trim().toUpperCase();
+    const name = fila[indicesCSV.equipo].trim().toUpperCase();
     const logo = logos[name];
     const gfpp = fila[indicesCSV.gfpp];
 
@@ -156,7 +154,7 @@ function llenarTablasSecundarias(filas) {
   });
 
   defensivaOrdenada.forEach((fila) => {
-    const name = fila[0].trim().toUpperCase();
+    const name = fila[indicesCSV.equipo].trim().toUpperCase();
     const logo = logos[name];
     const gcpp = fila[indicesCSV.gcpp];
 
@@ -284,112 +282,6 @@ function cambiarHistorial(tipo) {
 
 window.cambiarHistorial = cambiarHistorial;
 
-async function generarProyeccionHistorial() {
-  const pesoActual = 0.6;
-  const pesoHist = 0.4;
-
-  // 🔵 1️⃣ Obtener ranking actual desde el CSV
-  const response = await fetch(CSV_URL);
-  const csvText = await response.text();
-
-  let filasActuales = csvText
-    .split("\n")
-    .map((r) => r.split(","))
-    .slice(2, 8)
-    .filter((fila) => Number(fila[indicesCSV.pj]) > 0);
-
-  const rankingActual = {};
-
-  filasActuales.forEach((fila) => {
-    const equipo = fila[indicesCSV.equipo].trim().toUpperCase();
-    const valorRanking = fila[indicesCSV.ranking]?.trim();
-    rankingActual[equipo] = valorRanking ? parseFloat(valorRanking) : 0;
-  });
-
-  // 🔵 2️⃣ Historial
-  const rankingHist = await fetch("historial.json").then((r) => r.json());
-
-  const meses = Object.keys(rankingHist);
-  const equipos = Object.keys(rankingHist[meses[0]]);
-
-  const proyeccion = {};
-
-  equipos.forEach((eq) => {
-    let sumRanking = 0;
-    let count = 0;
-
-    const ultimosMeses = meses.slice(-3);
-
-    ultimosMeses.forEach((mes) => {
-      sumRanking += rankingHist[mes][eq] || 0;
-      count++;
-    });
-
-    const promedioHist = sumRanking / count;
-
-    const actual = rankingActual[eq.toUpperCase()] || 0;
-
-    const rankingFinal =
-      actual * pesoActual +
-      promedioHist * pesoHist;
-
-    proyeccion[eq] = {
-      actual: actual,
-      historico: promedioHist,
-      dinamico: rankingFinal,
-    };
-  });
-
-  const proyeccionArray = Object.entries(proyeccion)
-    .map(([eq, data]) => ({ equipo: eq, ...data }))
-    .sort((a, b) => b.dinamico - a.dinamico);
-
-  const cont = document.getElementById("tabla-proyeccion");
-  if (!cont) return;
-
-  cont.innerHTML = "";
-
-  const thead = document.createElement("thead");
-  const trHead = document.createElement("tr");
-
-  ["EQUIPO", "R DINAMICO", "R HISTORICO", "R ACTUAL"].forEach((titulo) => {
-    const th = document.createElement("th");
-    th.textContent = titulo;
-    trHead.appendChild(th);
-  });
-
-  thead.appendChild(trHead);
-  cont.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
-  cont.appendChild(tbody);
-
-  proyeccionArray.forEach((fila) => {
-    const tr = document.createElement("tr");
-
-    const tdLogo = document.createElement("td");
-    const logoURL = logos[fila.equipo.toUpperCase()] || "";
-    tdLogo.innerHTML = `<img class="logo" src="${logoURL}">`;
-    tr.appendChild(tdLogo);
-
-    const tdDinamico = document.createElement("td");
-    tdDinamico.textContent = fila.dinamico.toFixed(2);
-    tdDinamico.style.fontWeight = "bold";
-    tr.appendChild(tdDinamico);
-
-    const tdHistorico = document.createElement("td");
-    tdHistorico.textContent = fila.historico.toFixed(2);
-    tr.appendChild(tdHistorico);
-
-    const tdActual = document.createElement("td");
-    tdActual.textContent = fila.actual.toFixed(2);
-    tr.appendChild(tdActual);
-
-    tbody.appendChild(tr);
-  });
-}
-
-
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarTodos();
 
@@ -407,5 +299,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   cargarHistorialSwitch();
-  generarProyeccionHistorial();
 });
